@@ -911,7 +911,7 @@
             <i class="fas fa-robot"></i>
         </button>
         <div class="chatbot-window" id="chatbotWindow">
-            <!-- Flowise Chatbot will be loaded here -->
+            <div id="flowise-chatbot"></div>
         </div>
     </div>
 
@@ -919,33 +919,64 @@
         // Toggle chatbot window
         const chatbotToggle = document.getElementById('chatbotToggle');
         const chatbotWindow = document.getElementById('chatbotWindow');
-        
-        let chatbotLoaded = false;
-        
-        chatbotToggle.addEventListener('click', () => {
+        let chatbotInitialized = false;
+
+        chatbotToggle.addEventListener('click', async () => {
             chatbotWindow.classList.toggle('active');
             
-            // Load chatbot only when window is opened for the first time
-            if (chatbotWindow.classList.contains('active') && !chatbotLoaded) {
-                loadChatbot();
+            if (chatbotWindow.classList.contains('active') && !chatbotInitialized) {
+                await initChatbot();
+                chatbotInitialized = true;
             }
         });
-        
-        function loadChatbot() {
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.innerHTML = `
-                import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
-                Chatbot.init({
-                    chatflowid: "bc261199-a8d8-416d-8901-24b9187a3ae5",
-                    apiHost: "https://eduwin2307.github.io/donald-rice",
-                    chatflowConfig: {
-                        // Configuration options here
+
+        async function initChatbot() {
+            // Cargamos el módulo dinámicamente
+            const { default: Chatbot } = await import('https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js');
+            
+            Chatbot.init({
+                chatflowid: "bc261199-a8d8-416d-8901-24b9187a3ae5",
+                apiHost: "https://eduwin2307.github.io/PwDRice",
+                chatflowConfig: {
+                    // Configuración adicional si es necesaria
+                },
+                theme: {
+                    button: {
+                        backgroundColor: "#2e7d32",
+                        right: 20,
+                        bottom: 20,
+                        size: "large",
+                        iconColor: "white",
+                        customIconSrc: "https://cdn-icons-png.flaticon.com/512/4712/4712035.png",
+                    },
+                    chatWindow: {
+                        welcomeMessage: "¡Hola! Soy el asistente de Donald Rice. ¿Cómo puedo ayudarte hoy?",
+                        backgroundColor: "#ffffff",
+                        height: 600,
+                        width: 400,
+                        fontSize: 16,
+                        poweredByTextColor: "#2e7d32",
+                        botMessage: {
+                            backgroundColor: "#f1f8e9",
+                            textColor: "#1b5e20",
+                            showAvatar: true,
+                            avatarSrc: "https://cdn-icons-png.flaticon.com/512/4712/4712035.png",
+                        },
+                        userMessage: {
+                            backgroundColor: "#2e7d32",
+                            textColor: "#ffffff",
+                            showAvatar: true,
+                            avatarSrc: "https://cdn-icons-png.flaticon.com/512/3001/3001758.png",
+                        },
+                        textInput: {
+                            placeholder: "Escribe tu mensaje...",
+                            backgroundColor: "#ffffff",
+                            textColor: "#333333",
+                            sendButtonColor: "#2e7d32",
+                        }
                     }
-                })
-            `;
-            document.body.appendChild(script);
-            chatbotLoaded = true;
+                }
+            });
         }
     </script>
 </body>
